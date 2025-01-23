@@ -1,9 +1,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
-#include "ws2811.h"
+#include <vector>
+#include <string>
+#include <iostream>
 
-#define LED_COUNT 8          // Number of LEDs in your strip
-#define GPIO_PIN 18          // GPIO pin connected to the Data line
+#define LED_COUNT 8 // Number of LEDs in your strip (simulated)
 
 class LEDController : public rclcpp::Node {
 public:
@@ -13,23 +14,9 @@ public:
             std::bind(&LEDController::emotion_callback, this, std::placeholders::_1)
         );
 
-        // Initialize ws2811 structure
-        led_config.freq = WS2811_TARGET_FREQ;
-        led_config.dmanum = 10;
-        led_config.channel[0].gpionum = GPIO_PIN;
-        led_config.channel[0].count = LED_COUNT;
-        led_config.channel[0].invert = 0;
-        led_config.channel[0].brightness = 255;
-        led_config.channel[0].strip_type = WS2811_STRIP_GRB;
-
-        if (ws2811_init(&led_config) != WS2811_SUCCESS) {
-            RCLCPP_ERROR(this->get_logger(), "Failed to initialize WS2811");
-            rclcpp::shutdown();
-        }
-    }
-
-    ~LEDController() {
-        ws2811_fini(&led_config);
+        // Initialize simulated LED array
+        leds.resize(LED_COUNT, 0x000000); // Default all LEDs to "off"
+        RCLCPP_INFO(this->get_logger(), "LED Controller Node initialized (Simulation Mode)");
     }
 
 private:
@@ -37,12 +24,14 @@ private:
         std::string emotion = msg->data;
 
         uint32_t color = get_color_for_emotion(emotion);
-        
+
+        // Update simulated LEDs
         for (int i = 0; i < LED_COUNT; ++i) {
-            led_config.channel[0].leds[i] = color;
+            leds[i] = color;
         }
 
-        ws2811_render(&led_config);
+        // Print simulated LED output
+        print_leds();
     }
 
     uint32_t get_color_for_emotion(const std::string &emotion) {
@@ -57,8 +46,16 @@ private:
         return 0x000000; // Default: Off
     }
 
+    void print_leds() {
+        std::cout << "LED Colors: ";
+        for (const auto &color : leds) {
+            printf("#%06X ", color); // Print color as a hex value
+        }
+        std::cout << std::endl;
+    }
+
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-    ws2811_t led_config = {};
+    std::vector<uint32_t> leds; // Simulated LED array
 };
 
 int main(int argc, char *argv[]) {
@@ -68,4 +65,3 @@ int main(int argc, char *argv[]) {
     rclcpp::shutdown();
     return 0;
 }
-
