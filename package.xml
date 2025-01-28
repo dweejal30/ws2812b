@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>ws2812b</name>
-  <version>0.0.1</version>
-  <description>ROS 2 package for WS2812B LED control</description>
-  <maintainer email="your_email@example.com">Your Name</maintainer>
-  <license>MIT</license>
+  <name>ws2812b_controller</name>
+  <version>0.1.0</version>
+  <description>ROS 2 package for controlling WS2812B LEDs with Raspberry Pi</description>
+  <maintainer email="dweejal.shah@fau.de">dweejal</maintainer>
+  <license>Apache-2.0</license>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
