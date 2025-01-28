@@ -1,0 +1,16 @@
+# Ignore build artifacts
+build/
+install/
+log/
+
+# Ignore temporary files
+*.swp
+*.tmp
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
